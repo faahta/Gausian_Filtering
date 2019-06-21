@@ -8,8 +8,8 @@
 #include <process.h>
 #include <stdio.h>
 
-#define R 640
-#define C 480
+#define X 640
+#define Y 480
 
 DWORD WINAPI threadFunction1(LPVOID);
 DWORD WINAPI threadFunction2(LPVOID);
@@ -68,7 +68,9 @@ int _tmain(int argc, LPTSTR argv[]) {
 	/*create the threads*/
 	for (i = 0; i < n; i++) 
 		hThreads1[i] = CreateThread(NULL, 0 , (PTHREAD_START_ROUTINE)threadFunction1, &group1, 0, NULL);
-	
+	for (i = 0; i < m; i++)
+		hThreads1[i] = CreateThread(NULL, 0, (PTHREAD_START_ROUTINE)threadFunction2, &group2, 0, NULL);
+
 	WaitForMultipleObjects(n, hThreads1, TRUE, INFINITE);
 	for (i = 0; i < n; i++) {
 		CloseHandle(hThreads1[i]);
@@ -93,7 +95,7 @@ DWORD WINAPI threadFunction1(LPVOID lpParam) {
 		while (1) {
 			WaitForSingleObject(data->files.mt, INFINITE);
 				data->files.count++;
-				if (data->files.count > (R * C)) break;
+				if (data->files.count > (X * Y)) break;
 				_tprintf(_T("Doing filter3\n"));
 			ReleaseMutex(data->files.mt);
 		}
@@ -133,7 +135,7 @@ DWORD WINAPI threadFunction2(LPVOID lpParam) {
 		while (1) {
 			WaitForSingleObject(data->files.mt, INFINITE);
 			data->files.count++;
-			if (data->files.count > (R * C)) break;
+			if (data->files.count > (X * Y)) break;
 			_tprintf(_T("Done filter5\n"));
 			ReleaseMutex(data->files.mt);
 		}
